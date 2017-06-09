@@ -1,4 +1,4 @@
-export default new class Validator {
+class Validator {
 
     constructor() {
         this.errorMessagesBag = {};
@@ -348,4 +348,6 @@ export default new class Validator {
         return (string + '').charAt(0).toUpperCase() + (string + '').slice(1);
     }
 
-}();
+}
+
+export default new Validator();
