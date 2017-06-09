@@ -1,4 +1,3 @@
-import InvalidValueException from './exceptions/InvalidValueException';
 import Str from './helper/Str';
 
 class Validator {
@@ -47,7 +46,7 @@ class Validator {
 
     validateSingleValue(name, value, rules, alias, messages = []) {
         if (!rules) {
-            throw new InvalidValueException('Rules are not present.');
+            throw 'Rules are not present.';
         }
 
         rules.forEach((rule) => {
@@ -67,7 +66,7 @@ class Validator {
         try {
             this[rule](name, value, parameters, alias);
         } catch (e) {
-            throw new InvalidValueException(`${rule} is not a Validator.`);
+            throw `${rule} is not a Validator.`;
         }
     }
 
@@ -86,7 +85,7 @@ class Validator {
         let rawParameters = breakdown[1].split(',');
 
         if (rawParameters.length === 0) {
-            throw new InvalidValueException("No parameter specified.");
+            throw "No parameter specified.";
         }
 
         if (rawParameters.length === 1) {
