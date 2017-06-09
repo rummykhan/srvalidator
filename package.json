@@ -1,0 +1,15 @@
+{
+  "name": "srvalidator",
+  "description": "A Simple React Validator",
+  "version": "1.0.1-beta",
+  "repository": "git://github.com/rummykhan/srv",
+  "main": "index.js",
+  "keywords": [
+    "validation",
+    "react validation"
+  ],
+  "engines": {
+    "node": ">=0.10.40"
+  },
+  "license": "MIT"
+}
