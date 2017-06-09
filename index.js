@@ -1,6 +1,4 @@
-import Str from './helper/Str';
-
-class Validator {
+export default new class Validator {
 
     constructor() {
         this.errorMessagesBag = {};
@@ -71,7 +69,7 @@ class Validator {
     }
 
     static toClassRule(rule) {
-        return 'validate' + Str.ucfirst(rule);
+        return 'validate' + Validator.ucfirst(rule);
     }
 
     static hasParameters(rule) {
@@ -335,7 +333,7 @@ class Validator {
         let errors = this.getErrors(name);
 
         if (errors.length > 0) {
-            return Str.ucfirst(errors[0]);
+            return Validator.ucfirst(errors[0]);
         }
 
         return null;
@@ -346,6 +344,8 @@ class Validator {
         return this.getErrors(name).length > 0;
     }
 
-}
+    static ucfirst(string) {
+        return (string + '').charAt(0).toUpperCase() + (string + '').slice(1);
+    }
 
-export default new Validator();
+}();

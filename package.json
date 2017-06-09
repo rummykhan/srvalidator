@@ -2,7 +2,7 @@
   "name": "srvalidator",
   "description": "A Simple React Validator",
   "version": "1.0.4-beta",
-  "repository": "git://github.com/rummykhan/srv",
+  "repository": "git://github.com/rummykhan/srvalidator",
   "main": "index.js",
   "keywords": [
     "validation",
