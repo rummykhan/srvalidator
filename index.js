@@ -142,19 +142,21 @@ class Validator {
 
         let message = `Please enter a valid email address.`;
 
-        let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        let pattern = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-        if (!re.test(value)) {
+        if (!pattern.test(value)) {
             this.addValidationMessages(name, message);
         } else {
             this.removeValidationMessage(name, message);
         }
     }
 
+    // Check if value is array or not.
     validateArray(name, value, parameters = null, alias) {
         alias = Validator.assertAlias(name, alias);
 
         let message = `${alias} is not a valid array.`;
+
         if (!value || !value.constructor || value.constructor !== Array) {
             this.addValidationMessages(name, message);
         } else {
@@ -162,6 +164,7 @@ class Validator {
         }
     }
 
+    // Check if value is valid string.
     validateString(name, value, parameters = null, alias) {
 
         alias = Validator.assertAlias(name, alias);
@@ -174,11 +177,16 @@ class Validator {
         }
     }
 
+    // Check if value is greater than the given value.
     validateGte(name, value, benchmark, alias) {
-        alias = !!alias ? alias : name;
+        alias = Validator.assertAlias(name, alias);
 
         value = parseInt(value);
         benchmark = parseInt(benchmark);
+
+        if (isNaN(benchmark)) {
+            throw `${benchmark} is not a valid integer.`;
+        }
 
         let message = `${alias} must be greater than ${benchmark}.`;
 
@@ -189,11 +197,16 @@ class Validator {
         }
     }
 
+    // Checks if value is less than the given value.
     validateLte(name, value, benchmark, alias) {
-        alias = !!alias ? alias : name;
+        alias = Validator.assertAlias(name, alias);
 
         value = parseInt(value);
         benchmark = parseInt(benchmark);
+
+        if (isNaN(benchmark)) {
+            throw `${benchmark} is not a valid integer.`;
+        }
 
         let message = `${alias} must be less than ${benchmark}.`;
 
@@ -204,27 +217,33 @@ class Validator {
         }
     }
 
+    // Checks if value satisfies the given rule by minimum
     validateMin(name, value, length, alias) {
 
+        // If value is undefined no need to validate.
         if (typeof value === 'undefined') {
             return;
         }
 
+        // If value is string apply character validation.
         if (typeof value === 'string') {
             return this.validateStringMin(name, value, length, alias);
         }
 
+        // If value is number apply number validation.
         if (typeof value === 'number') {
             return this.validateNumberMin(name, value, length, alias);
         }
 
+        // If value is array apply array validation.
         if (!!value && !!value.constructor && value.constructor === Array) {
             return this.validateArrayMin(name, value, length, alias);
         }
     }
 
+    // Checks if string meets the min characters or not.
     validateStringMin(name, value, length, alias) {
-        alias = !!alias ? alias : name;
+        alias = Validator.assertAlias(name, alias);
 
         let message = `${alias} cannot be less than ${length} characters.`;
         if (value.length < length) {
@@ -234,8 +253,10 @@ class Validator {
         }
     }
 
+    // Checks if number meets the min characters or not.
     validateNumberMin(name, value, length, alias) {
-        alias = !!alias ? alias : name;
+        alias = Validator.assertAlias(name, alias);
+
         let message = `${alias} value cannot be less than ${length}`;
         if (value < length) {
             this.addValidationMessages(name, message);
@@ -244,8 +265,10 @@ class Validator {
         }
     }
 
+    // Checks if array meets the min length criteria or not.
     validateArrayMin(name, value, length, alias) {
-        alias = !!alias ? alias : name;
+        alias = Validator.assertAlias(name, alias);
+
         let message = `${alias} length cannot be less than ${length}`;
         if (value.length < length) {
             this.addValidationMessages(name, message);
@@ -254,27 +277,34 @@ class Validator {
         }
     }
 
-
+    // Check if the value meets the max criteria.
     validateMax(name, value, length, alias) {
+
+        // If value is undefined no need to validate.
         if (typeof value === 'undefined') {
             return;
         }
 
+        // If value is string match the min characters criteria.
         if (typeof value === 'string') {
             return this.validateStringMax(name, value, length, alias);
         }
 
+        // If value is number match the min value criteria.
         if (typeof value === 'number') {
             return this.validateNumberMax(name, value, length, alias);
         }
 
+        // If value is array match the min length criteria
         if (!!value && !!value.constructor && value.constructor === Array) {
             return this.validateArrayMax(name, value, length, alias);
         }
     }
 
+    // Check if the value matches the max characters criteria.
     validateStringMax(name, value, length, alias) {
-        alias = !!alias ? alias : name;
+        alias = Validator.assertAlias(name, alias);
+
         let message = `${alias} cannot be more than ${length} characters.`;
         if (value.length > length) {
             this.addValidationMessages(name, message);
@@ -283,8 +313,10 @@ class Validator {
         }
     }
 
+    // Checks if the value matches the max value criteria.
     validateNumberMax(name, value, length, alias) {
-        alias = !!alias ? alias : name;
+        alias = Validator.assertAlias(name, alias);
+
         let message = `${alias} value cannot be greater than ${length}`;
         if (value > length) {
             this.addValidationMessages(name, message);
@@ -293,6 +325,7 @@ class Validator {
         }
     }
 
+    // Checks if the value matches the max length criteria.
     validateArrayMax(name, value, length, alias) {
         alias = !!alias ? alias : name;
 
@@ -304,6 +337,7 @@ class Validator {
         }
     }
 
+    // Validate the value as a url.
     validateUrl(name, value, parameters = null, alias) {
 
         alias = !!alias ? alias : name;
@@ -311,12 +345,12 @@ class Validator {
         let message = `${alias} is not a valid url.`;
 
         // https://stackoverflow.com/a/5717133
-        let pattern = new RegExp('^(https?:\/\/)?'+ // protocol
-            '((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|'+ // domain name
-            '((\d{1,3}\.){3}\d{1,3}))'+ // OR ip (v4) address
-            '(\:\d+)?(\/[-a-z\d%_.~+]*)*'+ // port and path
-            '(\?[;&a-z\d%_.~+=-]*)?'+ // query string
-            '(\#[-a-z\d_]*)?$','i'); // fragment locater
+        let pattern = new RegExp('^(https?:\/\/)?' + // protocol
+            '((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|' + // domain name
+            '((\d{1,3}\.){3}\d{1,3}))' + // OR ip (v4) address
+            '(\:\d+)?(\/[-a-z\d%_.~+]*)*' + // port and path
+            '(\?[;&a-z\d%_.~+=-]*)?' + // query string
+            '(\#[-a-z\d_]*)?$', 'i'); // fragment locater
 
         if (!pattern.test(value)) {
             this.addValidationMessages(name, message);
@@ -325,6 +359,7 @@ class Validator {
         }
     }
 
+    // Remove Validation message from error Bag
     removeValidationMessage(name, message) {
         let errors = this.getErrors(name);
         let index = errors.indexOf(message);
@@ -340,6 +375,7 @@ class Validator {
         }
     }
 
+    // Add Validation message to error Bag.
     addValidationMessages(name, message) {
         let errors = this.getErrors(name);
 
@@ -350,6 +386,7 @@ class Validator {
         this.errorMessagesBag[name] = errors;
     }
 
+    // Get Errors related to certain field.
     getErrors(name) {
         let errors = [];
 
@@ -360,6 +397,7 @@ class Validator {
         return errors;
     }
 
+    // Get first error related to certain field.
     first(name) {
         let errors = this.getErrors(name);
 
@@ -371,10 +409,12 @@ class Validator {
 
     }
 
+    // Checks if the certain field has errors.
     hasErrors(name) {
         return this.getErrors(name).length > 0;
     }
 
+    // Upper case the first character of the string.
     static ucfirst(string) {
         return (string + '').charAt(0).toUpperCase() + (string + '').slice(1);
     }
@@ -424,7 +464,7 @@ class Validator {
         return null;
     }
 
-    static assertAlias(name, alias){
+    static assertAlias(name, alias) {
         return !!alias ? alias : name;
     }
 
