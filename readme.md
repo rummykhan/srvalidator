@@ -25,13 +25,13 @@ Don't use this Validator in Production, This Validator is still in testing and d
 
 ```javascript
 import React, {Component} from 'react';
-import v from 'srvalidator';
+import Validator from 'srvalidator';
 
 class Form extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            v,
+            v: new Validator(),
             form: {
                 first_name: '',
                 last_name: '',
