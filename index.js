@@ -294,6 +294,18 @@ class Validator {
         }
     }
 
+    validateUrl(name, value, parameters = null, alias) {
+
+        alias = !!alias ? alias : name;
+
+        let message = `${alias} is not a valid string.`;
+        if (typeof value !== 'string') {
+            this.addValidationMessages(name, message);
+        } else {
+            this.removeValidationMessage(name, message);
+        }
+    }
+
     removeValidationMessage(name, message) {
         let errors = this.getErrors(name);
         let index = errors.indexOf(message);
@@ -350,4 +362,4 @@ class Validator {
 
 }
 
-export default new Validator();
+export default new Validator;
