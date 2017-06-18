@@ -1,105 +1,104 @@
+/**
+ * Copyright (c) 2017 Rummy Khan
+ *
+ * This module provides support for validation forms using react.
+ * This works because any change in state will cause the render function to execute.
+ */
 class Validator {
+
 
     constructor() {
         this.errorMessagesBag = {};
     }
 
+    // Core method of React Validator
     validate(values, rules, alias = {}, messages = []) {
 
+        // iterate over form values.
         for (let key in values) {
 
+            // get the value by key.
             let value = values[key];
 
-            let rule = this.getRules(key, rules);
+            // get the rules corresponding to the form field.
+            let rules = Validator.getRules(key, rules);
 
-            if (!rule) {
+            // if rule is not present just skip the validation for that form field.
+            if (!rules) {
                 return;
             }
 
-            this.validateSingleValue(key, value, rule.split('|'), alias[key]);
+            // validate each field on the given rules
+            // Split the rules by pipe '|'
+            this.validateSingleValue(key, value, rules.split('|'), alias[key]);
         }
 
+        // return if the validator passes.
         return this.passes();
     }
 
     passes() {
+        // It determines the validation is passed or failed by checking the error message bag.
         return Object.keys(this.errorMessagesBag).length === 0;
     }
 
     isValid() {
-        return Object.keys(this.errorMessagesBag).length === 0;
+        // An Alias to method passes
+        return this.passes();
     }
 
     getMessages() {
+        // Get Error message bag.
         return this.errorMessagesBag;
     }
 
-    getRules(name, rules) {
-        if (rules[name]) {
-            return rules[name];
-        }
-
-        return null;
-    }
-
+    // Validate A Single Form Value against the rules.
     validateSingleValue(name, value, rules, alias, messages = []) {
+
+        // if rule is by chance an empty string
         if (!rules) {
             throw 'Rules are not present.';
         }
 
+        // Iterate over rules to validate each rule one by one over a value.
         rules.forEach((rule) => {
             this.validateSingleRule(name, value, rule, alias);
         })
     }
 
+    // Validate a single value over a single rule.
     validateSingleRule(name, value, rule, alias) {
+
+        // get Rule Name to method.
         rule = Validator.toClassRule(rule);
+
+        // Initialize the parameters to null..
         let parameters = null;
 
+        // Checks if rule contains parameters
+        // If it is separate rule and parameters
         if (Validator.hasParameters(rule)) {
+            // Get parameter from composite rule string.
             parameters = Validator.getParameters(rule);
+
+            // Get Rule from composite rule string
             rule = Validator.separateRuleFromParameter(rule);
         }
 
         try {
+            // This is wrapped inside Try-Catch Block just to avoid the check if method exists or not.
             this[rule](name, value, parameters, alias);
         } catch (e) {
+
+            // If validation method against that rule doesn't exist. Throw Exception.
             throw `${rule} is not a Validator.`;
         }
     }
 
-    static toClassRule(rule) {
-        return 'validate' + Validator.ucfirst(rule);
-    }
-
-    static hasParameters(rule) {
-        return rule.split(':').length > 1
-    }
-
-    static getParameters(rule) {
-
-        let breakdown = rule.split(':');
-
-        let rawParameters = breakdown[1].split(',');
-
-        if (rawParameters.length === 0) {
-            throw "No parameter specified.";
-        }
-
-        if (rawParameters.length === 1) {
-            return rawParameters[0];
-        }
-
-        return rawParameters;
-    }
-
-    static separateRuleFromParameter(rule) {
-        return rule.split(':')[0];
-    }
-
+    // Require validate method.
     validateRequired(name, value, parameters = null, alias) {
 
-        alias = !!alias ? alias : name;
+        alias = Validator.assertAlias(name, alias);
 
         let message = `${alias} is required.`;
 
@@ -108,28 +107,38 @@ class Validator {
             return;
         }
 
+        // If value is empty, add validation message.
         if (!value) {
             this.addValidationMessages(name, message);
         } else {
+
+            // If value is not empty remove validation message.
             this.removeValidationMessage(name, message)
         }
     }
 
+    // Validate Valus is integer or not.
     validateInt(name, value, parameters = null, alias) {
-        alias = !!alias ? alias : name;
+
+        alias = Validator.assertAlias(name, alias);
+
         value = parseInt(value);
 
         let message = `${alias} should be a number.`;
 
+        // Checks if number is integer.
         if (!Number.isInteger(value)) {
+            // Add Validation messages.
             this.addValidationMessages(name, message);
         } else {
+            // remove validation messages
             this.removeValidationMessage(name, message);
         }
     }
 
+    // Validate email address.
     validateEmail(name, value, parameters = null, alias) {
-        alias = !!alias ? alias : name;
+        alias = Validator.assertAlias(name, alias);
 
         let message = `Please enter a valid email address.`;
 
@@ -143,7 +152,8 @@ class Validator {
     }
 
     validateArray(name, value, parameters = null, alias) {
-        alias = !!alias ? alias : name;
+        alias = Validator.assertAlias(name, alias);
+
         let message = `${alias} is not a valid array.`;
         if (!value || !value.constructor || value.constructor !== Array) {
             this.addValidationMessages(name, message);
@@ -154,7 +164,7 @@ class Validator {
 
     validateString(name, value, parameters = null, alias) {
 
-        alias = !!alias ? alias : name;
+        alias = Validator.assertAlias(name, alias);
 
         let message = `${alias} is not a valid string.`;
         if (typeof value !== 'string') {
@@ -358,6 +368,55 @@ class Validator {
 
     static ucfirst(string) {
         return (string + '').charAt(0).toUpperCase() + (string + '').slice(1);
+    }
+
+    // Convert the rule string to Validate Method
+    static toClassRule(rule) {
+        return 'validate' + Validator.ucfirst(rule);
+    }
+
+    // Check if Composite rule string contains parameters.
+    static hasParameters(rule) {
+        return rule.split(':').length > 1
+    }
+
+    // Get parameters from the rule.
+    static getParameters(rule) {
+
+        let breakdown = rule.split(':');
+
+        let rawParameters = breakdown[1].split(',');
+
+        // If by chance parameters string is empty.
+        if (rawParameters.length === 0) {
+            throw "No parameter specified.";
+        }
+
+        if (rawParameters.length === 1) {
+            return rawParameters[0];
+        }
+
+        return rawParameters;
+    }
+
+    // Separate rule from parameters
+    static separateRuleFromParameter(rule) {
+        return rule.split(':')[0];
+    }
+
+    // Get field rules from the rules object
+    static getRules(name, rules) {
+
+        // Checks if the rules exists
+        if (!!rules[name]) {
+            return rules[name];
+        }
+
+        return null;
+    }
+
+    static assertAlias(name, alias){
+        return !!alias ? alias : name;
     }
 
 }
