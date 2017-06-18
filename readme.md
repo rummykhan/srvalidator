@@ -2,15 +2,15 @@
 
 This is a simple rather beginner approach to validate react form.
 
-#### Disclaimer
+### Disclaimer
 Don't use this Validator in Production, This Validator is still in testing and development phase.
 
 
-#### Installation
+### Installation
 
 `npm install srvalidator`
 
-#### Supported Rules
+### Supported Rules
 * required
 * email
 * int
@@ -21,7 +21,7 @@ Don't use this Validator in Production, This Validator is still in testing and d
 * lte:30
 * url
 
-#### Usage
+### Usage
 
 ```javascript
 import React, {Component} from 'react';
@@ -124,11 +124,11 @@ export default Form;
 
 ```
 
-#### TODO
+### TODO
 1. Return Promise at validate.
 2. Add Confirm Validator
 3. Refactor the code.
 4. Add Language support.
 
-#### Contact
+### Contact
 <a href="mailto://rehan_manzoor@outlook.com">rehan_manzoor@outlook.com</a>
