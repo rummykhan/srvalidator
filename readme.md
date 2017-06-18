@@ -19,7 +19,6 @@ Don't use this Validator in Production, This Validator is still in testing and d
 * max:10
 * gte:20
 * lte:30
-* url
 
 ### Usage
 
