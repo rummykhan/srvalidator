@@ -11,7 +11,7 @@ class Validator {
         this.errorMessagesBag = {};
     }
 
-    // Core method of React Validator
+    // Final Method of React Validator.
     validateAll(values) {
 
         values = values || this.values;
@@ -21,20 +21,36 @@ class Validator {
             this.refresh(values);
 
             if (Object.keys(this.errorMessagesBag).length === 0) {
-                resolve({success: true, data: values});
+                resolve({
+                    success: true,
+                    data: values
+                });
             } else {
-                reject({success: false, data: values, errors: this.errorMessagesBag});
+                reject({
+                    success: false,
+                    data: values,
+                    errors: this.errorMessagesBag
+                });
             }
         });
     }
 
+    // Method for backward compatibility.
     validate(values, rules, alias, messages) {
+
+        this.init(values, rules, alias, messages);
+        return this.refresh(values);
+    }
+
+    // Initialize the object with values, rules, alias, messages
+    init(values, rules, alias, messages) {
         this.values = values || {};
         this.rules = rules || {};
         this.alias = alias || {};
         this.messages = messages || [];
     }
 
+    // refresh validation.
     refresh(values) {
 
         values = values || this.values;
@@ -61,6 +77,8 @@ class Validator {
             // Split the rules by pipe '|'
             this.validateSingleValue(key, value, rules.split('|'), this.alias[key]);
         }
+
+        return this.passes();
     }
 
     passes() {
