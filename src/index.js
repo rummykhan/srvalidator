@@ -12,7 +12,7 @@ class Validator {
     }
 
     // Core method of React Validator
-    validate(values) {
+    validateAll(values) {
 
         values = values || this.values;
 
@@ -28,7 +28,7 @@ class Validator {
         });
     }
 
-    init(values, rules, alias, messages) {
+    validate(values, rules, alias, messages) {
         this.values = values || {};
         this.rules = rules || {};
         this.alias = alias || {};
