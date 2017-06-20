@@ -12,13 +12,13 @@ class Validator {
     }
 
     // Core method of React Validator
-    validate(values, rules, alias = {}, messages = []) {
+    validate(values) {
 
-        this.init(values, rules, alias, messages);
+        values = values || this.values;
 
         return new Promise((resolve, reject) => {
 
-            this.refresh();
+            this.refresh(values);
 
             if (Object.keys(this.errorMessagesBag).length === 0) {
                 resolve({success: true, data: values});
@@ -28,23 +28,26 @@ class Validator {
         });
     }
 
-    init(values, rules, alias, messages){
+    init(values, rules, alias, messages) {
         this.values = values || {};
         this.rules = rules || {};
         this.alias = alias || {};
         this.messages = messages || [];
     }
 
-    refresh() {
+    refresh(values) {
+
+        values = values || this.values;
+
         // iterate over form values.
-        for (let key in this.values) {
+        for (let key in values) {
 
             if (!this.values.hasOwnProperty(key)) {
                 continue;
             }
 
             // get the value by key.
-            let value = this.values[key];
+            let value = values[key];
 
             // get the rules corresponding to the form field.
             let rules = Validator.getRules(key, this.rules);
@@ -80,7 +83,7 @@ class Validator {
 
         // if rule is by chance an empty string
         if (!rules) {
-            throw 'Rules are not present.';
+            throw new Error('Rules are not present.');
         }
 
         // Iterate over rules to validate each rule one by one over a value.
@@ -114,7 +117,7 @@ class Validator {
         } catch (e) {
 
             // If validation method against that rule doesn't exist. Throw Exception.
-            throw `${rule} is not a Validator.`;
+            throw new Error(`${rule} is not a Validator.`);
         }
     }
 
@@ -145,7 +148,7 @@ class Validator {
 
         alias = Validator.assertAlias(name, alias);
 
-        value = parseInt(value);
+        value = parseInt(value, 10);
 
         let message = `${alias} should be a number.`;
 
@@ -165,7 +168,7 @@ class Validator {
 
         let message = `Please enter a valid email address.`;
 
-        let pattern = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        let pattern = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@(([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
         if (!pattern.test(value)) {
             this.addValidationMessages(name, message);
@@ -204,11 +207,11 @@ class Validator {
     validateGte(name, value, benchmark, alias) {
         alias = Validator.assertAlias(name, alias);
 
-        value = parseInt(value);
-        benchmark = parseInt(benchmark);
+        value = parseInt(value, 10);
+        benchmark = parseInt(benchmark, 10);
 
         if (isNaN(benchmark)) {
-            throw `${benchmark} is not a valid integer.`;
+            throw new Error(`${benchmark} is not a valid integer.`);
         }
 
         let message = `${alias} must be greater than ${benchmark}.`;
@@ -224,11 +227,11 @@ class Validator {
     validateLte(name, value, benchmark, alias) {
         alias = Validator.assertAlias(name, alias);
 
-        value = parseInt(value);
-        benchmark = parseInt(benchmark);
+        value = parseInt(value, 10);
+        benchmark = parseInt(benchmark, 10);
 
         if (isNaN(benchmark)) {
-            throw `${benchmark} is not a valid integer.`;
+            throw new Error(`${benchmark} is not a valid integer.`);
         }
 
         let message = `${alias} must be less than ${benchmark}.`;
@@ -360,27 +363,30 @@ class Validator {
         }
     }
 
-    // Validate the value as a url.
-    validateUrl(name, value, parameters = null, alias) {
+    /*
+     TODO: Review regex for url
+     // Validate the value as a url.
+     validateUrl(name, value, parameters = null, alias) {
 
-        alias = !!alias ? alias : name;
+     alias = !!alias ? alias : name;
 
-        let message = `${alias} is not a valid url.`;
+     let message = `${alias} is not a valid url.`;
 
-        // https://stackoverflow.com/a/5717133
-        let pattern = new RegExp('^(https?:\/\/)?' + // protocol
-            '((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|' + // domain name
-            '((\d{1,3}\.){3}\d{1,3}))' + // OR ip (v4) address
-            '(\:\d+)?(\/[-a-z\d%_.~+]*)*' + // port and path
-            '(\?[;&a-z\d%_.~+=-]*)?' + // query string
-            '(\#[-a-z\d_]*)?$', 'i'); // fragment locater
+     // https://stackoverflow.com/a/5717133
+     let pattern = new RegExp('^(https?:\/\/)?' + // protocol
+     '((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|' + // domain name
+     '((\d{1,3}\.){3}\d{1,3}))' + // OR ip (v4) address
+     '(\:\d+)?(\/[-a-z\d%_.~+]*)*' + // port and path
+     '(\?[;&a-z\d%_.~+=-]*)?' + // query string
+     '(\#[-a-z\d_]*)?$', 'i'); // fragment locater
 
-        if (!pattern.test(value)) {
-            this.addValidationMessages(name, message);
-        } else {
-            this.removeValidationMessage(name, message);
-        }
-    }
+     if (!pattern.test(value)) {
+     this.addValidationMessages(name, message);
+     } else {
+     this.removeValidationMessage(name, message);
+     }
+     }
+     */
 
     // Remove Validation message from error Bag
     removeValidationMessage(name, message) {
@@ -461,7 +467,7 @@ class Validator {
 
         // If by chance parameters string is empty.
         if (rawParameters.length === 0) {
-            throw "No parameter specified.";
+            throw new Error("No parameter specified.");
         }
 
         if (rawParameters.length === 1) {
