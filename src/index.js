@@ -14,30 +14,11 @@ class Validator {
     // Core method of React Validator
     validate(values, rules, alias = {}, messages = []) {
 
+        this.init(values, rules, alias, messages);
+
         return new Promise((resolve, reject) => {
 
-            // iterate over form values.
-            for (let key in values) {
-
-                if (!values.hasOwnProperty(key)) {
-                    continue;
-                }
-
-                // get the value by key.
-                let value = values[key];
-
-                // get the rules corresponding to the form field.
-                let rules = Validator.getRules(key, rules);
-
-                // if rule is not present just skip the validation for that form field.
-                if (!rules) {
-                    return;
-                }
-
-                // validate each field on the given rules
-                // Split the rules by pipe '|'
-                this.validateSingleValue(key, value, rules.split('|'), alias[key]);
-            }
+            this.refresh();
 
             if (Object.keys(this.errorMessagesBag).length === 0) {
                 resolve({success: true, data: values});
@@ -45,6 +26,38 @@ class Validator {
                 reject({success: false, data: values, errors: this.errorMessagesBag});
             }
         });
+    }
+
+    init(values, rules, alias, messages){
+        this.values = values || {};
+        this.rules = rules || {};
+        this.alias = alias || {};
+        this.messages = messages || [];
+    }
+
+    refresh() {
+        // iterate over form values.
+        for (let key in this.values) {
+
+            if (!this.values.hasOwnProperty(key)) {
+                continue;
+            }
+
+            // get the value by key.
+            let value = this.values[key];
+
+            // get the rules corresponding to the form field.
+            let rules = Validator.getRules(key, this.rules);
+
+            // if rule is not present just skip the validation for that form field.
+            if (!rules) {
+                return;
+            }
+
+            // validate each field on the given rules
+            // Split the rules by pipe '|'
+            this.validateSingleValue(key, value, rules.split('|'), this.alias[key]);
+        }
     }
 
     passes() {
