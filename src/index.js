@@ -14,27 +14,37 @@ class Validator {
     // Core method of React Validator
     validate(values, rules, alias = {}, messages = []) {
 
-        // iterate over form values.
-        for (let key in values) {
+        return new Promise((resolve, reject) => {
 
-            // get the value by key.
-            let value = values[key];
+            // iterate over form values.
+            for (let key in values) {
 
-            // get the rules corresponding to the form field.
-            let rules = Validator.getRules(key, rules);
+                if (!values.hasOwnProperty(key)) {
+                    continue;
+                }
 
-            // if rule is not present just skip the validation for that form field.
-            if (!rules) {
-                return;
+                // get the value by key.
+                let value = values[key];
+
+                // get the rules corresponding to the form field.
+                let rules = Validator.getRules(key, rules);
+
+                // if rule is not present just skip the validation for that form field.
+                if (!rules) {
+                    return;
+                }
+
+                // validate each field on the given rules
+                // Split the rules by pipe '|'
+                this.validateSingleValue(key, value, rules.split('|'), alias[key]);
             }
 
-            // validate each field on the given rules
-            // Split the rules by pipe '|'
-            this.validateSingleValue(key, value, rules.split('|'), alias[key]);
-        }
-
-        // return if the validator passes.
-        return this.passes();
+            if (Object.keys(this.errorMessagesBag).length === 0) {
+                resolve({success: true, data: values});
+            } else {
+                reject({success: false, data: values, errors: this.errorMessagesBag});
+            }
+        });
     }
 
     passes() {
