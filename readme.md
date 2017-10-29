@@ -1,9 +1,6 @@
-# A Simple React Validator
+# A Lightweight Javascript Validator
 
-This is a simple rather beginner approach to validate react form.
-
-### Disclaimer
-Don't use this Validator in Production, This Validator is still in testing and development phase.
+This is a very simple and lightweight validator for Node.JS, React.JS, React Native or Vue.JS.
 
 
 ### Installation
@@ -124,10 +121,9 @@ export default Form;
 ```
 
 ### TODO
-1. Return Promise at validate.
-2. Add Confirm Validator
-3. Refactor the code.
-4. Add Language support.
+1. Add Confirm Validator
+2. Refactor the code.
+3. Add Language support.
 
 ### Contact
 <a href="mailto://rehan_manzoor@outlook.com">rehan_manzoor@outlook.com</a>
