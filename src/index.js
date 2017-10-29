@@ -4,6 +4,9 @@
  * This module provides support for validation forms using react.
  * This works because any change in state will cause the render function to execute.
  */
+
+import UrlValidator from 'valid-url';
+
 class Validator {
 
 
@@ -381,30 +384,21 @@ class Validator {
     }
   }
 
-  /*
-   TODO: Review regex for url
-   // Validate the value as a url.
-   validateUrl(name, value, parameters = null, alias) {
 
-   alias = !!alias ? alias : name;
+  // Validate the value as a url.
+  validateUrl(name, value, parameters = null, alias) {
 
-   let message = `${alias} is not a valid url.`;
+    alias = !!alias ? alias : name;
 
-   // https://stackoverflow.com/a/5717133
-   let pattern = new RegExp('^(https?:\/\/)?' + // protocol
-   '((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|' + // domain name
-   '((\d{1,3}\.){3}\d{1,3}))' + // OR ip (v4) address
-   '(\:\d+)?(\/[-a-z\d%_.~+]*)*' + // port and path
-   '(\?[;&a-z\d%_.~+=-]*)?' + // query string
-   '(\#[-a-z\d_]*)?$', 'i'); // fragment locater
+    let message = `${alias} is not a valid url.`;
 
-   if (!pattern.test(value)) {
-   this.addValidationMessages(name, message);
-   } else {
-   this.removeValidationMessage(name, message);
-   }
-   }
-   */
+    if (!UrlValidator.isUri(value)) {
+      this.addValidationMessages(name, message);
+    } else {
+      this.removeValidationMessage(name, message);
+    }
+  }
+
 
   // Remove Validation message from error Bag
   removeValidationMessage(name, message) {
