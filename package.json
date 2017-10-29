@@ -1,9 +1,9 @@
 {
-  "name": "srvalidator",
+  "name": "r-validator",
   "description": "A Simple React & React Native Validator",
   "version": "1.1.4",
-  "repository": "git://github.com/rummykhan/srvalidator",
-  "main": "./dist/srvalidator.min.js",
+  "repository": "git@github.com:rummykhan/r-validator.git",
+  "main": "./dist/r-validator.min.js",
   "keywords": [
     "JS validation",
     "Javascript validation",
