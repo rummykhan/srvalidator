@@ -27,23 +27,23 @@ async function main () {
 
   const { code } = await bundle.generate({
     format: 'umd',
-    name: 'r-validator',
+    name: 'srvalidator',
     banner:
     `/**
- * r-validator v${version}
+ * srvalidator v${version}
  * (c) ${new Date().getFullYear()} Rehan Manzoor
  * @license MIT
  */`
   });
 
-  const output = path.join(outputFolder, 'r-validator.js');
+  const output = path.join(outputFolder, 'srvalidator.js');
   fs.writeFileSync(output, code);
-  console.log(chalk.green('Output File:') + ' r-validator.js');
-  fs.writeFileSync(path.join(outputFolder, 'r-validator.min.js'), Uglify.minify(code, {
+  console.log(chalk.green('Output File:') + ' srvalidator.js');
+  fs.writeFileSync(path.join(outputFolder, 'srvalidator.min.js'), Uglify.minify(code, {
     compress: true,
     mangle: true,
   }).code);
-  console.log(chalk.green('Output File:') + ' r-validator.min.js');
+  console.log(chalk.green('Output File:') + ' srvalidator.min.js');
 }
 
 async function build () {
