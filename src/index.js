@@ -9,7 +9,6 @@ import UrlValidator from 'valid-url';
 
 class Validator {
 
-
   constructor() {
     this.errorMessagesBag = {};
   }
@@ -384,7 +383,6 @@ class Validator {
     }
   }
 
-
   // Validate the value as a url.
   validateUrl(name, value, parameters = null, alias) {
 
@@ -398,7 +396,6 @@ class Validator {
       this.removeValidationMessage(name, message);
     }
   }
-
 
   // Remove Validation message from error Bag
   removeValidationMessage(name, message) {

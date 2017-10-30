@@ -16,6 +16,7 @@ This is a very simple and lightweight validator for Node.JS, React.JS, React Nat
 * max:10
 * gte:20
 * lte:30
+* url
 
 ### Usage
 
