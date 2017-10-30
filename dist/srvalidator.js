@@ -1,5 +1,5 @@
 /**
- * srvalidator v1.1.6
+ * srvalidator v1.1.7
  * (c) 2017 Rehan Manzoor
  * @license MIT
  */
@@ -567,7 +567,6 @@ Validator.prototype.validateArrayMax = function validateArrayMax (name, value, l
   }
 };
 
-
 // Validate the value as a url.
 Validator.prototype.validateUrl = function validateUrl (name, value, parameters, alias) {
     if ( parameters === void 0 ) parameters = null;
@@ -583,7 +582,6 @@ Validator.prototype.validateUrl = function validateUrl (name, value, parameters,
     this.removeValidationMessage(name, message);
   }
 };
-
 
 // Remove Validation message from error Bag
 Validator.prototype.removeValidationMessage = function removeValidationMessage (name, message) {
